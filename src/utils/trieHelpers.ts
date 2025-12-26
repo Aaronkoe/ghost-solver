@@ -2,21 +2,22 @@ export const getExampleWord = (node: any, currentPath: string, targetWin: boolea
   // Base case: we hit a terminal node (a word)
   if (node.e) return currentPath;
 
-  // Try to find a branch that aligns with our goal
-  // If targetWin is true, we want a path where the opponent eventually loses (v=0 for them)
-  const branches = Object.entries(node.c);
+  // Convert entries to an array
+  const branches = Object.entries(node.c || {});
 
-  for (const [char, child]: [string, any] of branches) {
+  if (branches.length === 0) return currentPath;
+
+  // Search for a branch that matches our win/loss goal
+  for (const entry of branches) {
+    const char = entry[0];
+    const child = entry[1] as any; // Explicitly cast here instead of in the for-loop head
+
     if (child.v === (targetWin ? 1 : 0)) {
       return getExampleWord(child, currentPath + char, targetWin);
     }
   }
 
-  // Fallback: If no perfect path, just show the first available word
-  if (branches.length > 0) {
-    const [char, child]: [string, any] = branches[0];
-    return getExampleWord(child, currentPath + char, targetWin);
-  }
-
-  return currentPath;
+  // Fallback: If no perfect path, follow the first available character
+  const [firstChar, firstChild] = branches[0];
+  return getExampleWord(firstChild, currentPath + firstChar, targetWin);
 };
