@@ -51,27 +51,27 @@ def build_solver_trie(word_list_path, output_path='trie.json', min_length=4):
 
     # 4. Recursive Minimax (Win/Loss) & Probability calculation
     def evaluate(node):
+        # Base count: if this node is a word, it counts as 1
+        total_words = 1 if node["e"] else 0
+        
         if node["e"]:
-            # If this node is a word, the player who just moved LOST.
-            # So this state is a "Loss" (0) for the next player.
             node["v"] = 0 
             node["p"] = 0
-            return 0
-
+            node["n"] = 1 # Number of words reachable from here
+            return 0, 1
+    
         child_results = []
         for char in node["c"]:
-            # Recurse: Get value from perspective of the next player, then invert
-            opponent_win_val = evaluate(node["c"][char])
-            my_win_val = 1 - opponent_win_val
+            opp_win_val, child_word_count = evaluate(node["c"][char])
+            my_win_val = 1 - opp_win_val
             child_results.append(my_win_val)
-
-        # v: 1 if there's at least one move that makes the opponent lose
+            total_words += child_word_count
+    
         node["v"] = 1 if any(v == 1 for v in child_results) else 0
-        
-        # p: Probability of choosing a winning move at random from this node
         node["p"] = round(sum(child_results) / len(child_results), 2) if child_results else 0
+        node["n"] = total_words # Store the total reachable words
         
-        return node["v"]
+        return node["v"], total_words
 
     print("Evaluating")
     evaluate(trie)
