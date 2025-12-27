@@ -54,7 +54,7 @@ export default function App() {
         {/* Header Section */}
         <header className="mb-8 text-center">
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
-            Ghost Solver
+            Ghost Solver (Hi Nina hehe)
           </h1>
           <button
             onClick={() => setShowModal(true)}
