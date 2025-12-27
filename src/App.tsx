@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getExampleWord } from './utils/trieHelpers';
 import AboutModal from './components/AboutModal';
 import LetterCard from './components/LetterCard';
 import TurnIndicator from './components/TurnIndicator';
