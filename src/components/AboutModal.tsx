@@ -29,7 +29,7 @@ const CONTENT = {
       "The Status: A green 'Win' means that if you play perfectly from here, the other player is mathematically forced to lose.",
     countDesc:
       'The Word Count: Found in the top corner, this shows how many unique words are still reachable through this branch.',
-    sampleDesc: 'Sample Words: A couple of sample words that could result from this letter.'
+    sampleDesc: 'Sample Words: A couple of sample words that could result from this letter.',
   },
   engine: {
     label: 'THE ENGINE',
