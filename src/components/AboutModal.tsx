@@ -106,6 +106,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                   data={{ n: 12, v: 1, p: 1 }}
                   input="sample"
                   visuals={{ color: 'hsl(120, 85%, 40%)', icon: '✅', label: 'WIN' }}
+                  playerCount={2}
                 />
               </div>
               <div className="text-sm space-y-3">

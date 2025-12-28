@@ -49,17 +49,10 @@ const findWordWithParity = (
   currentFragmentLength: number, // Length of the string BEFORE this search
 ): string | null => {
   if (node.e) {
-    // A player loses if: (wordLength % playerCount) === (myTurnIndex % playerCount)
+    // A player loses if: (wordLength % playerCount) matches the current player's turn index.
     // Let's use absolute indices to keep it simple.
     // If input.length is 4, it is Player 1's turn (4 % 3 = 1).
     // Player 1 will lose on any word where wordLength % 3 === 1.
-
-    const myTurnIndex = (currentFragmentLength % playerCount);
-    const wordEndingIndex = (path.length % playerCount);
-
-    // In Ghost, the index is usually 1-based for the user, but 0-based is fine for math
-    // A word is a LOSS for the current player if it ends on their turn cycle.
-    const isMyLoss = (wordEndingIndex === (myTurnIndex + 1) % playerCount);
 
     // Standard Ghost Rule: The person who says the last letter of a 4+ word loses.
     // Let's refine the math to be bulletproof:
