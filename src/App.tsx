@@ -4,6 +4,13 @@ import LetterCard from './components/LetterCard';
 import PlayerManager from './components/PlayerManager';
 import GameStatus from './components/GameStatus';
 
+const HEADER_TEXT = 'Ghost (Word Game) Solver';
+const LOADING_DICTIONARY_TEXT = 'Loading 2of12 Dictionary...';
+const ABOUT_MODAL_BUTTON_TEXT = 'What is this?';
+const PLACEHOLDER_TEXT = 'TYPE...';
+const RESET_BUTTON_TEXT = 'Reset';
+const CHARACTERS_HEADER = 'Characters';
+
 export default function App() {
   // --- State ---
   const [trie, setTrie] = useState<any>(null);
@@ -68,7 +75,7 @@ export default function App() {
   if (!trie) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 font-black uppercase italic animate-pulse">
-        Loading 2of12 Dictionary...
+        {LOADING_DICTIONARY_TEXT}
       </div>
     );
   }
@@ -79,7 +86,7 @@ export default function App() {
         {/* Header */}
         <header className="mb-8 text-center">
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
-            Ghost (Word Game) Solver
+            {HEADER_TEXT}
           </h1>
           <div className="flex justify-center gap-4 mt-4 font-mono text-xs uppercase font-bold">
             <span className="bg-black text-white px-2 py-1 tracking-widest">2of12 Expert Mode</span>
@@ -87,7 +94,7 @@ export default function App() {
               onClick={() => setShowModal(true)}
               className="bg-yellow-300 border-2 border-black px-2 py-1 hover:bg-black hover:text-white transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
             >
-              What is this?
+              {ABOUT_MODAL_BUTTON_TEXT}
             </button>
           </div>
         </header>
@@ -109,7 +116,7 @@ export default function App() {
             className="w-full text-5xl md:text-8xl font-black text-center uppercase outline-none border-b-8 border-stone-100 focus:border-black transition-all pb-4 placeholder:opacity-10"
             value={input}
             onChange={(e) => setInput(e.target.value.replace(/[^a-zA-Z]/g, ''))}
-            placeholder="TYPE..."
+            placeholder={PLACEHOLDER_TEXT}
           />
           <div className="flex justify-between items-center mt-6">
             <button
@@ -119,12 +126,12 @@ export default function App() {
               }}
               className="px-6 py-2 border-4 border-black font-black hover:bg-black hover:text-white transition-all uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
             >
-              Reset
+              {RESET_BUTTON_TEXT}
             </button>
             <div className="text-right">
               <div className="font-black text-2xl leading-none">{input.length}</div>
               <div className="font-bold text-[10px] uppercase opacity-50 tracking-tighter">
-                Characters
+                {CHARACTERS_HEADER}
               </div>
             </div>
           </div>
