@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import AboutModal from './components/AboutModal';
 import LetterCard from './components/LetterCard';
 import PlayerManager from './components/PlayerManager';
@@ -10,6 +10,11 @@ export default function App() {
   const [input, setInput] = useState('');
   const [playerCount, setPlayerCount] = useState(2);
   const [showModal, setShowModal] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+  };
 
   // --- Data Loading ---
   useEffect(() => {
@@ -92,11 +97,14 @@ export default function App() {
           playerCount={playerCount}
           activePlayerIndex={activePlayerIndex}
           setPlayerCount={setPlayerCount}
+          gameStarted={input.length > 0}
+          onAction={focusInput}
         />
 
         {/* Central Input Card */}
         <div className="bg-white border-4 border-black p-6 md:p-10 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] mb-12">
           <input
+            ref={inputRef}
             autoFocus
             className="w-full text-5xl md:text-8xl font-black text-center uppercase outline-none border-b-8 border-stone-100 focus:border-black transition-all pb-4 placeholder:opacity-10"
             value={input}
@@ -105,7 +113,10 @@ export default function App() {
           />
           <div className="flex justify-between items-center mt-6">
             <button
-              onClick={() => setInput('')}
+              onClick={() => {
+                setInput('');
+                focusInput(); // This ensures the cursor stays in the box after clearing
+              }}
               className="px-6 py-2 border-4 border-black font-black hover:bg-black hover:text-white transition-all uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
             >
               Reset
