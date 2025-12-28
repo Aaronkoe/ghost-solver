@@ -98,7 +98,7 @@ export default function App() {
           activePlayerIndex={activePlayerIndex}
           setPlayerCount={setPlayerCount}
           gameStarted={input.length > 0}
-          onAction={focusInput}
+          inputRefocuser={focusInput}
         />
 
         {/* Central Input Card */}

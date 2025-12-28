@@ -3,7 +3,7 @@ interface PlayerManagerProps {
   activePlayerIndex: number;
   setPlayerCount: (count: number | ((prev: number) => number)) => void;
   gameStarted: boolean;
-  onAction: () => void; // For refocusing the input
+  inputRefocuser: () => void; // For refocusing the input
 }
 
 export default function PlayerManager({
@@ -11,7 +11,7 @@ export default function PlayerManager({
   activePlayerIndex,
   setPlayerCount,
   gameStarted,
-  onAction,
+  inputRefocuser,
 }: PlayerManagerProps) {
   // 1. Core Logic Functions
   const addPlayer = () => setPlayerCount((prev) => Math.min(prev + 1, 8));
@@ -21,14 +21,14 @@ export default function PlayerManager({
   const handleAddClick = () => {
     if (!gameStarted) {
       addPlayer();
-      onAction();
+      inputRefocuser();
     }
   };
 
   const handleRemoveClick = () => {
     if (!gameStarted) {
       removePlayer();
-      onAction();
+      inputRefocuser();
     }
   };
 
