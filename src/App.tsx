@@ -147,6 +147,7 @@ export default function App() {
                 data={data}
                 input={input}
                 visuals={getVisuals(data)}
+                playerCount={playerCount}
               />
             ))}
           </div>
