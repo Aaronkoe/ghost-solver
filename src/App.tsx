@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { calculateSafety } from './utils/trieHelpers.ts'
 import AboutModal from './components/AboutModal';
 import LetterCard from './components/LetterCard';
 import PlayerManager from './components/PlayerManager';
@@ -58,17 +59,23 @@ export default function App() {
   // --- Derived State ---
   const activePlayerIndex = input.length % playerCount;
 
-  const getVisuals = (node: any) => {
-    const isGuaranteedWin = node.v === 1;
-    const isGuaranteedLoss = node.v === 0 && node.p === 0;
+  const getVisuals = (node: any, safety: number, playerCount: number) => {
+    // If 2 players, trust the pre-calculated minimax node.v
+    // If 3+ players, we label it as 'Risky' unless safety is 0 or 1
+    const isGuaranteedWin = playerCount === 2 ? node.v === 1 : safety === 1;
+    const isGuaranteedLoss = playerCount === 2 ? node.v === 0 : safety === 0;
 
-    // HSL: 120 is Green, 0 is Red. p (probability) slides between them.
-    let hue = isGuaranteedWin ? 120 : isGuaranteedLoss ? 0 : 20 + node.p * 75;
+    let mainColor = isGuaranteedWin ? '#22c55e' : isGuaranteedLoss ? '#ef4444' : '#f59e0b';
+
+    // The safety score gets its own color for the bar (Red -> Yellow -> Green)
+    const safetyHue = safety * 120;
+    const safetyColor = `hsl(${safetyHue}, 80%, 45%)`;
 
     return {
-      color: `hsl(${hue}, 85%, 40%)`,
+      mainColor,
+      safetyColor,
       icon: isGuaranteedWin ? '✅' : isGuaranteedLoss ? '❌' : '⚠️',
-      label: isGuaranteedWin ? 'WIN' : isGuaranteedLoss ? 'LOSS' : `${Math.round(node.p * 100)}%`,
+      label: isGuaranteedWin ? 'WIN' : isGuaranteedLoss ? 'LOSS' : 'NEUTRAL',
     };
   };
 
@@ -147,16 +154,20 @@ export default function App() {
 
         {gameState.type === 'active' && gameState.node && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mb-20">
-            {Object.entries(gameState.node.c).map(([char, data]: [string, any]) => (
+          {Object.entries(gameState.node.c).map(([char, data]: [string, any]) => {
+            const safety = calculateSafety(data, input + char, playerCount);
+            return (
               <LetterCard
                 key={char}
                 char={char}
                 data={data}
                 input={input}
-                visuals={getVisuals(data)}
+                safety={safety} // Pass new safety score
+                visuals={getVisuals(data, safety, playerCount)}
                 playerCount={playerCount}
               />
-            ))}
+            );
+          })}
           </div>
         )}
       </div>

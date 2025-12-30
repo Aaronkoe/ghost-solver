@@ -4,12 +4,14 @@ interface LetterCardProps {
   char: string;
   data: any;
   input: string;
-  visuals: { color: string; icon: string; label: string };
+  // Visuals now contains two distinct colors
+  visuals: { mainColor: string; safetyColor: string; icon: string; label: string };
   playerCount: number;
+  safety: number; // The new 0-1 score we calculated
 }
 
-export default function LetterCard({ char, data, input, visuals, playerCount }: LetterCardProps) {
-  // Use the randomized, parity-aware helper to find examples
+export default function LetterCard({ char, data, input, visuals, playerCount, safety }: LetterCardProps) {
+  // input + char represents the state AFTER this letter is played
   const winWord = getExampleWord(data, input + char, true, playerCount);
   const lossWord = getExampleWord(data, input + char, false, playerCount);
 
@@ -20,27 +22,32 @@ export default function LetterCard({ char, data, input, visuals, playerCount }: 
         {data.n} WORDS
       </div>
 
-      {/* Main Letter Circle */}
+      {/* Main Letter Circle - Uses Minimax Forced Outcome Color */}
       <div
-        style={{ backgroundColor: visuals.color }}
+        style={{ backgroundColor: visuals.mainColor }}
         className="w-16 h-16 rounded-full border-4 border-black flex items-center justify-center text-4xl font-black text-white shadow-[inset_0_-4px_0_rgba(0,0,0,0.2)] mb-2"
       >
         {char.toUpperCase()}
       </div>
 
-      {/* Status Label & Probability Bar */}
+      {/* Status Label & Safety Score Bar */}
       <div className="mt-2 w-full">
         <div className="flex justify-between items-center mb-1">
           <span className="font-black text-[10px] uppercase tracking-tighter">
             {visuals.icon} {visuals.label}
           </span>
+          <span className="font-bold text-[9px] opacity-60">
+            {Math.round(safety * 100)}% SAFE
+          </span>
         </div>
+
+        {/* Progress Bar - Uses the Gradient Safety Color */}
         <div className="w-full h-2.5 bg-stone-100 border-2 border-black overflow-hidden rounded-sm">
           <div
             className="h-full transition-all duration-700 ease-out"
             style={{
-              width: `${data.p * 100}%`,
-              backgroundColor: visuals.color,
+              width: `${safety * 100}%`,
+              backgroundColor: visuals.safetyColor,
             }}
           />
         </div>
@@ -67,7 +74,7 @@ export default function LetterCard({ char, data, input, visuals, playerCount }: 
 
       {/* Subtle hover detail */}
       <div className="absolute bottom-1 right-2 text-[8px] font-bold text-stone-300 opacity-0 group-hover:opacity-100 transition-opacity uppercase">
-        Analysis Mode
+        {playerCount} Players
       </div>
     </div>
   );

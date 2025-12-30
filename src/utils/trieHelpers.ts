@@ -7,61 +7,21 @@ const shuffle = <T>(array: T[]): T[] => {
   return result;
 };
 
-// Main helper
-export const getExampleWord = (
-  node: any,
-  currentPath: string,
-  targetWin: boolean,
-  playerCount: number,
-): string | null => {
-  const branches = Object.entries(node.c || {});
-  if (branches.length === 0) {
-    // Check the current node itself if it's a word
-    if (node.e) {
-      const lettersAdded = 0; // We are at the end
-      const isWin = lettersAdded % playerCount !== 0;
-      return isWin === targetWin ? currentPath : null;
-    }
-    return null;
-  }
-
-  const shuffledBranches = shuffle(branches);
-
-  for (const [char, child] of shuffledBranches as [string, any][]) {
-    const word = findWordWithParity(
-      child,
-      currentPath + char,
-      targetWin,
-      playerCount,
-      currentPath.length, // The index of the letter the player is currently choosing
-    );
-    if (word) return word;
-  }
-
-  return null; // Return null if no word with this parity exists
-};
-
 const findWordWithParity = (
   node: any,
   path: string,
   targetWin: boolean,
   playerCount: number,
-  currentFragmentLength: number, // Length of the string BEFORE this search
+  actorIndex: number,
 ): string | null => {
+  // If this node represents a completed word
   if (node.e) {
-    // A player loses if: (wordLength % playerCount) matches the current player's turn index.
-    // Let's use absolute indices to keep it simple.
-    // If input.length is 4, it is Player 1's turn (4 % 3 = 1).
-    // Player 1 will lose on any word where wordLength % 3 === 1.
+    // The player who typed the last letter loses.
+    // Index of the last letter is (length - 1)
+    const loserIndex = (path.length - 1) % playerCount;
 
-    // Standard Ghost Rule: The person who says the last letter of a 4+ word loses.
-    // Let's refine the math to be bulletproof:
-    const loser = path.length % playerCount;
-    // If loser is 0, it means Player 3 (in a 3-man game) lost.
-    const actualLoser = loser === 0 ? playerCount : loser;
-    const currentPlayer = (currentFragmentLength % playerCount) + 1;
-
-    const isWin = actualLoser !== currentPlayer;
+    // The actor wins if they are NOT the loser
+    const isWin = loserIndex !== actorIndex;
     return isWin === targetWin ? path : null;
   }
 
@@ -74,10 +34,47 @@ const findWordWithParity = (
       path + char,
       targetWin,
       playerCount,
-      currentFragmentLength,
+      actorIndex
     );
     if (result) return result;
   }
 
   return null;
+};
+
+export const getExampleWord = (
+  node: any,
+  currentPath: string,
+  targetWin: boolean,
+  playerCount: number,
+): string | null => {
+  // The "actor" is the person who just played the letter that created currentPath.
+  // Their move is at the last index of currentPath.
+  const actorIndex = (currentPath.length - 1) % playerCount;
+
+  return findWordWithParity(node, currentPath, targetWin, playerCount, actorIndex);
+};
+
+export const calculateSafety = (node: any, currentPath: string, playerCount: number): number => {
+  let totalWords = 0;
+  let actorLosses = 0;
+  const actorIndex = (currentPath.length - 1) % playerCount;
+
+  const traverse = (n: any, path: string) => {
+    if (n.e) {
+      totalWords++;
+      const loserIndex = (path.length - 1) % playerCount;
+      if (loserIndex === actorIndex) {
+        actorLosses++;
+      }
+    }
+    if (n.c) {
+      for (const char in n.c) {
+        traverse(n.c[char], path + char);
+      }
+    }
+  };
+
+  traverse(node, currentPath);
+  return totalWords === 0 ? 0 : 1 - actorLosses / totalWords;
 };

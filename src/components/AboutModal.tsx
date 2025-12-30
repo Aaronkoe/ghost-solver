@@ -8,7 +8,7 @@ interface AboutModalProps {
 const CONTENT = {
   intro: {
     heading: 'Computer analyzer for the spelling game Ghost.',
-    body: "This website solves the word game Ghost. You may not know it by name, but it’s a staple of road trips and waiting rooms. I built this because I was surprised to find no web-based solver existed to help players perform post-game analyses or settle disputes over 'perfect' moves.",
+    body: "This website solves the word game Ghost. You may not know it by name, but it’s a staple of road trips and waiting rooms. I built this because I was surprised to find no web-based solver existed when I needed one most. (I was trying to determine if I had already lost when my opponent played an 'I' to make 'AVOI'. Apparently, I had.)",
   },
   rules: {
     label: 'HOW THE GAME WORKS',
@@ -26,10 +26,19 @@ const CONTENT = {
     label: 'READING THE SOLVER',
     letterDesc: 'The Letter: Shows your next possible move.',
     statusDesc:
-      "The Status: A green 'Win' means that if you play perfectly from here, the other player is mathematically forced to lose.",
+      "The Status: A green 'Win' means that if you play perfectly from here, you can mathematically force a win.",
+    safetyDesc:
+      'The Safety Bar: Indicates the percentage of words in this branch that are safe for you. A higher bar means more room for error.',
     countDesc:
       'The Word Count: Found in the top corner, this shows how many unique words are still reachable through this branch.',
-    sampleDesc: 'Sample Words: A couple of sample words that could result from this letter.',
+    sampleDesc: 'Sample Words: A couple of sample words that could result from this letter, if they exist.',
+  },
+dictionary: {
+    label: 'THE DICTIONARY (2of12)',
+    description: "To solve a word game, one must decide on a dictionary (list of acceptable words) to use. This seems like a trivial step until you realize there are tens of thousands of words all along the gradient of 'that's obviously a word' and 'What the heck is an OUGIYA', and every dictionary draws the line somewhere different.",
+    tidbit: "This solver uses the **2of12** list from the 12dicts project. This list only includes words found in at least two of twelve major English dictionaries, ensuring that the words the computer suggests are actually 'real' words you've likely heard of. Don't blame me if you haven't, though.",
+    linkText: 'View 12dicts License & Information →',
+    linkUrl: 'http://patrickbarry.com/anagrams/license_12dicts.html',
   },
   engine: {
     label: 'THE ENGINE',
@@ -103,9 +112,15 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
               <div className="w-40 shrink-0 pointer-events-none opacity-80">
                 <LetterCard
                   char="q"
-                  data={{ n: 12, v: 1, p: 1 }}
+                  data={{ n: 12, v: 1, p: 0.8 }}
                   input="sample"
-                  visuals={{ color: 'hsl(120, 85%, 40%)', icon: '✅', label: 'WIN' }}
+                  safety={0.83}
+                  visuals={{
+                    mainColor: '#22c55e',
+                    safetyColor: 'hsl(100, 80%, 45%)',
+                    icon: '✅',
+                    label: 'WIN'
+                  }}
                   playerCount={2}
                 />
               </div>
@@ -119,6 +134,11 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
                   {CONTENT.guide.statusDesc.split(':')[1]}
                 </p>
                 <p>
+                   {/* ADDED SAFETY DESC */}
+                  <strong>{CONTENT.guide.safetyDesc.split(':')[0]}:</strong>
+                  {CONTENT.guide.safetyDesc.split(':')[1]}
+                </p>
+                <p>
                   <strong>{CONTENT.guide.countDesc.split(':')[0]}:</strong>
                   {CONTENT.guide.countDesc.split(':')[1]}
                 </p>
@@ -130,6 +150,25 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
             </div>
           </div>
 
+<div>
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">
+              {CONTENT.dictionary.label}
+            </h3>
+            <div className="space-y-4 text-slate-600 text-sm">
+              <p>{CONTENT.dictionary.description}</p>
+              <p className="bg-yellow-50 p-4 border-l-4 border-yellow-400 italic">
+                {CONTENT.dictionary.tidbit}
+              </p>
+              <a
+                href={CONTENT.dictionary.linkUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block font-bold text-blue-600 hover:underline"
+              >
+                {CONTENT.dictionary.linkText}
+              </a>
+            </div>
+          </div>
           {/* Algorithm Section */}
           <div>
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2">
