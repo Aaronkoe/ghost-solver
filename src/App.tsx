@@ -5,7 +5,7 @@ import LetterCard from './components/LetterCard';
 import PlayerManager from './components/PlayerManager';
 import GameStatus from './components/GameStatus';
 
-const HEADER_TEXT = 'Ghost (Word Game) Solver';
+const HEADER_TEXT = 'Ghost Solver';
 const LOADING_DICTIONARY_TEXT = 'Loading 2of12 Dictionary...';
 const ABOUT_MODAL_BUTTON_TEXT = 'What is this?';
 const PLACEHOLDER_TEXT = 'TYPE...';
@@ -96,7 +96,6 @@ export default function App() {
             {HEADER_TEXT}
           </h1>
           <div className="flex justify-center gap-4 mt-4 font-mono text-xs uppercase font-bold">
-            <span className="bg-black text-white px-2 py-1 tracking-widest">2of12 Expert Mode</span>
             <button
               onClick={() => setShowModal(true)}
               className="bg-yellow-300 border-2 border-black px-2 py-1 hover:bg-black hover:text-white transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
